@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - '5000:5000'
+    environment:
+      - PORT=5000
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - MONGO_URI=mongodb://mongo:27017/online_claim_system
+      - JWT_SECRET=your_jwt_secret
+      - JWT_EXPIRES_IN=1h
+    depends_on:
+      - postgres
+      - mongo
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./dist:/usr/src/app/dist
+  postgres:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  mongo:
+    image: mongo:6
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: online_claim_system
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  postgres-data:
+  mongo-data:
